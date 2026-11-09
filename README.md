@@ -3,7 +3,7 @@
 This project illustrates a Java Maven build, JUnit 5 tests, a GitHub Actions CI pipeline, and publishing a tested executable JAR to GitHub Releases.
 
 ## Requirements
-- Java 17+
+- Java 25
 - Maven 3.8+
 - Git and a GitHub account
 
