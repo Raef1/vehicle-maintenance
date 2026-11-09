@@ -1,0 +1,50 @@
+name: Java CI and Release
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Run JUnit tests and package
+        run: mvn --batch-mode clean verify
+      - name: Upload application JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: vehicle-maintenance
+          path: target/vehicle-maintenance-1.0.0.jar
+          if-no-files-found: error
+
+  deploy:
+    needs: build-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download tested JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: vehicle-maintenance
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "build-${GITHUB_RUN_NUMBER}" \
+            vehicle-maintenance-1.0.0.jar \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Build ${GITHUB_RUN_NUMBER}" \
+            --notes "Automated tested build"
