@@ -6,7 +6,7 @@ public class MaintenanceCalculator {
             throw new IllegalArgumentException("Invalid input");
         }
         if (type.equals("GAS")) {
-            return 80 + mileage * 0.03;
+            return 80 + mileage * 0.02;
         }
         if (type.equals("EV")) {
             return 50 + mileage * 0.01;
